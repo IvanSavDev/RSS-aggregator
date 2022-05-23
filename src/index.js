@@ -1,11 +1,22 @@
 import './scss/style.scss';
-import * as yup from 'yup';
+import { isEmpty, uniqueId } from 'lodash';
 import i18next from 'i18next';
 import ru from './locales/ru';
+import validate from './validate';
 import render from './view';
+import loader from './loader';
+// import testRss from './testRss';
+import parser from './parser';
 
 const app = (textLib) => {
-  const form = document.querySelector('.rss-form');
+  const elements = {
+    form: document.querySelector('.rss-form'),
+    input: document.querySelector('#url-input'),
+    feedback: document.querySelector('.feedback'),
+    btn: document.querySelector('[aria-label="add"]'),
+    posts: document.querySelector('.posts'),
+    feeds: document.querySelector('.feeds'),
+  };
 
   const state = {
     valid: true,
@@ -14,55 +25,41 @@ const app = (textLib) => {
     data: {
       url: '',
     },
+    existUrl: [],
     feeds: [],
+    posts: [],
   };
 
-  const watchedState = render(state, form);
+  const watchedState = render(state, elements, textLib);
 
-  const validate = (datas, feeds) => {
-    yup.setLocale({
-      mixed: {
-        notOneOf: () => 'existUrl',
-      },
-      string: {
-        url: () => 'uncorrectUrl',
-      },
-    });
-
-    const schema = yup.object({
-      url: yup.string().required().url()
-        .notOneOf(feeds),
-    });
-    return schema.validate(datas, { abortEarly: false })
-      .then(() => '')
-      .catch((e) => {
-        // if (e.message === 'url must be a valid URL') {
-        //   return 'невалидный url';
-        // }
-        //   console.log(e.message);
-        //   return 'уже такая ссылка есть';
-        console.log(e.message);
-        return textLib(e.message);
-      });
-  };
-
-  form.addEventListener('submit', (e) => {
+  elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const data = new FormData(e.target);
-    const value = data.get('url');
-    // state.processState = 'sending';
-    // state.processError = null;
-    watchedState.data.url = value;
-    validate(state.data, state.feeds)
+    watchedState.processState = 'sending';
+    watchedState.processError = null;
+    const dataFromForm = new FormData(e.target);
+    const value = dataFromForm.get('url');
+    state.data.url = value;
+
+    validate(state.data, state.existUrl, textLib)
       .then((errors) => {
-        if (errors === '') {
-          watchedState.feeds.push(value);
+        if (isEmpty(errors)) {
+          state.existUrl.push(value);
         } else {
-          watchedState.processError = `${errors}`;
+          throw new Error(`${errors}`);
         }
-      }).catch((er) => {
+      })
+      .then(() => loader(state.data.url))
+      .then((data) => {
+        watchedState.processState = 'sent';
+        const { feed, posts } = parser(data, uniqueId());
+        const updatePosts = [...posts, ...state.posts];
+        const updateFeeds = [feed, ...state.feeds];
+        watchedState.feeds = updateFeeds;
+        watchedState.posts = updatePosts;
+      })
+      .catch((error) => {
         watchedState.processState = 'error';
-        watchedState.processError = `${er}`;
+        watchedState.processError = `${error.message}`;
       });
   });
 };
