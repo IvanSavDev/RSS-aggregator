@@ -5,7 +5,8 @@
     "es6": true
   },
   "rules": {
-    "no-console": 0
+    "no-console": 0,
+    "no-debugger": "off"
   },
   "extends": "airbnb-base",
   "parserOptions": {
