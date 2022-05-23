@@ -1,7 +1,9 @@
 import onChange from 'on-change';
 
 const renderUrl = (data, form) => {
+  const textError = document.querySelector('.feedback');
   const input = form.querySelector('.form-control');
+  textError.textContent = '';
   input.classList.remove('is-invalid');
   form.reset();
   input.focus();
