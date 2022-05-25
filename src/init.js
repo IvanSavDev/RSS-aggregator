@@ -5,7 +5,6 @@ import validate from './validate';
 import updateRss from './updateRss';
 import render from './view';
 import loader from './loader';
-// import testRss from './testRss';
 import parser from './parser';
 
 const addPostsAndFeeds = (inputData, state, watchedState) => {
