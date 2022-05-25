@@ -65,6 +65,9 @@ const app = (textLib) => {
     existUrls: [],
     feeds: [],
     posts: [],
+    ui: {
+      activeLink: [],
+    },
   };
 
   const watchedState = render(state, elements, textLib);

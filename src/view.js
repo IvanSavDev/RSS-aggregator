@@ -21,6 +21,116 @@ const renderErrors = (nameError, elements) => {
   input.classList.add('is-invalid');
 };
 
+const generateContainerForPostsAndFeeds = (nameGroup) => {
+  const container = document.createElement('div');
+  container.classList.add('card', 'border-0');
+  const body = document.createElement('div');
+  body.classList.add('card-body');
+  const titleBody = document.createElement('h2');
+  titleBody.classList.add('card-title', 'h4');
+  titleBody.textContent = `${nameGroup}`;
+  body.append(titleBody);
+  container.append(body);
+  const containerList = document.createElement('ul');
+  containerList.classList.add('list-group', 'border-0', 'rounded-0');
+  container.append(containerList);
+  return container;
+};
+
+const generateLink = (state, post) => {
+  const link = document.createElement('a');
+  const listActiveLink = state.ui.activeLink;
+
+  link.setAttribute('class', 'fw-bold');
+  link.setAttribute('href', post.link);
+  link.setAttribute('data-id', post.id);
+  link.setAttribute('target', '_blank');
+  link.textContent = post.title;
+
+  if (listActiveLink.includes(post.link)) {
+    link.setAttribute('class', 'fw-normal link-secondary');
+  }
+
+  return link;
+};
+
+const generateBtn = (post) => {
+  const btn = document.createElement('button');
+  btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  btn.setAttribute('data-id', post.id);
+  btn.setAttribute('data-bs-toggel', 'modal');
+  btn.setAttribute('data-bs-target', '#modal');
+  btn.setAttribute('type', 'button');
+  btn.textContent = 'Просмотр';
+  return btn;
+};
+
+const generateFeeds = (feeds) => {
+  const listFeeds = [];
+  feeds.forEach((feed) => {
+    const item = document.createElement('li');
+    item.classList.add('list-group-item', 'border-0', 'border-end-0');
+    const titleFeed = document.createElement('h3');
+    titleFeed.classList.add('h6', 'm-0');
+    titleFeed.textContent = feed.title;
+    const descriptionFeed = document.createElement('p');
+    descriptionFeed.classList.add('m-0', 'small', 'text-black-50');
+    descriptionFeed.textContent = feed.description;
+    item.append(titleFeed);
+    item.append(descriptionFeed);
+    listFeeds.push(item);
+  });
+  return listFeeds;
+};
+
+const generatePosts = (state, posts) => {
+  const containerPosts = [];
+  posts.forEach((post) => {
+    const item = document.createElement('li');
+    item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    const link = generateLink(state, post);
+    const btn = generateBtn(post);
+    item.append(link);
+    item.append(btn);
+    containerPosts.push(item);
+  });
+  return containerPosts;
+};
+
+const renderPosts = (state, posts, elements) => {
+  const listPosts = generatePosts(state, posts);
+
+  let containerListPosts = elements.posts.querySelector('ul');
+  if (elements.posts.children.length === 0) {
+    const containerPosts = generateContainerForPostsAndFeeds('Посты');
+    elements.posts.append(containerPosts);
+    containerListPosts = elements.posts.querySelector('ul');
+  }
+
+  containerListPosts.addEventListener('click', (e) => {
+    const currentElement = e.target;
+    if (currentElement.tagName === 'A') {
+      currentElement.setAttribute('class', 'fw-normal link-secondary');
+      const currentLink = currentElement.getAttribute('href');
+      state.ui.activeLink.push(currentLink);
+    }
+  });
+
+  containerListPosts.replaceChildren(...listPosts);
+};
+
+const renderFeed = (feeds, elements) => {
+  const listFeeds = generateFeeds(feeds);
+
+  if (elements.feeds.children.length === 0) {
+    const containerFeeds = generateContainerForPostsAndFeeds('Фиды');
+    elements.feeds.append(containerFeeds);
+  }
+
+  const containerListFeeds = elements.feeds.querySelector('ul');
+  containerListFeeds.replaceChildren(...listFeeds);
+};
+
 const handleProcessState = (textLib, processState, elements) => {
   const { btn, feedback } = elements;
 
@@ -54,106 +164,6 @@ const handleProcessState = (textLib, processState, elements) => {
   }
 };
 
-const generateContainerForPostsAndFeeds = (nameGroup) => {
-  const container = document.createElement('div');
-  container.classList.add('card', 'border-0');
-  const body = document.createElement('div');
-  body.classList.add('card-body');
-  const titleBody = document.createElement('h2');
-  titleBody.classList.add('card-title', 'h4');
-  titleBody.textContent = `${nameGroup}`;
-  body.append(titleBody);
-  container.append(body);
-  return container;
-};
-
-const generateLink = (post) => {
-  const link = document.createElement('a');
-  link.classList.add('fw-bold');
-  link.setAttribute('href', post.link);
-  link.setAttribute('data-id', post.id);
-  link.setAttribute('target', '_blank');
-  link.textContent = post.title;
-  return link;
-};
-
-const generateBtn = (post) => {
-  const btn = document.createElement('button');
-  btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  btn.setAttribute('data-id', post.id);
-  btn.setAttribute('data-bs-toggel', 'modal');
-  btn.setAttribute('data-bs-target', '#modal');
-  btn.setAttribute('type', 'button');
-  btn.textContent = 'Просмотр';
-  return btn;
-};
-
-const renderPosts = (posts, elements) => {
-  const containerPosts = generateContainerForPostsAndFeeds('Посты');
-
-  const listPosts = document.createElement('ul');
-  listPosts.classList.add('list-group', 'border-0', 'rounded-0');
-  posts.forEach((post) => {
-    const item = document.createElement('li');
-    item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    const link = generateLink(post);
-    const btn = generateBtn(post);
-    item.append(link);
-    item.append(btn);
-    listPosts.append(item);
-  });
-
-  listPosts.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') {
-      e.target.setAttribute('class', 'fw-normal link-secondary');
-    }
-  });
-
-  containerPosts.append(listPosts);
-  elements.posts.replaceChildren(containerPosts);
-};
-
-// const generateFeeds = (elements) => {
-//   const listFeeds = [];
-//   elements.forEach((element) => {
-//     const item = document.createElement('li');
-//     item.classList.add('list-group-item', 'border-0', 'border-end-0');
-//     const titleFeed = document.createElement('h3');
-//     titleFeed.classList.add('h6', 'm-0');
-//     titleFeed.textContent = element.title;
-//     const descriptionFeed = document.createElement('p');
-//     descriptionFeed.classList.add('m-0', 'small', 'text-black-50');
-//     descriptionFeed.textContent = element.description;
-//     item.append(titleFeed);
-//     item.append(descriptionFeed);
-//     listFeeds.push(item);
-//   });
-//   return listFeeds;
-// };
-
-const renderFeed = (feeds, elements) => {
-  const containerFeeds = generateContainerForPostsAndFeeds('Фиды');
-
-  const listFeeds = document.createElement('ul');
-  listFeeds.classList.add('list-group', 'border-0', 'rounded-0');
-  feeds.forEach((feed) => {
-    const item = document.createElement('li');
-    item.classList.add('list-group-item', 'border-0', 'border-end-0');
-    const titleFeed = document.createElement('h3');
-    titleFeed.classList.add('h6', 'm-0');
-    titleFeed.textContent = feed.title;
-    const descriptionFeed = document.createElement('p');
-    descriptionFeed.classList.add('m-0', 'small', 'text-black-50');
-    descriptionFeed.textContent = feed.description;
-    item.append(titleFeed);
-    item.append(descriptionFeed);
-    listFeeds.append(item);
-  });
-
-  containerFeeds.append(listFeeds);
-  elements.feeds.replaceChildren(containerFeeds);
-};
-
 export default (state, elements, textLib) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
@@ -166,7 +176,7 @@ export default (state, elements, textLib) => {
         break;
 
       case 'posts':
-        renderPosts(value, elements);
+        renderPosts(state, value, elements);
         break;
 
       case 'feeds':
