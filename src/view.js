@@ -54,80 +54,104 @@ const handleProcessState = (textLib, processState, elements) => {
   }
 };
 
-const renderPosts = (posts, elements) => {
+const generateContainerForPostsAndFeeds = (nameGroup) => {
   const container = document.createElement('div');
   container.classList.add('card', 'border-0');
   const body = document.createElement('div');
   body.classList.add('card-body');
   const titleBody = document.createElement('h2');
   titleBody.classList.add('card-title', 'h4');
-  titleBody.textContent = 'Посты';
+  titleBody.textContent = `${nameGroup}`;
   body.append(titleBody);
   container.append(body);
+  return container;
+};
+
+const generateLink = (post) => {
+  const link = document.createElement('a');
+  link.classList.add('fw-bold');
+  link.setAttribute('href', post.link);
+  link.setAttribute('data-id', post.id);
+  link.setAttribute('target', '_blank');
+  link.textContent = post.title;
+  return link;
+};
+
+const generateBtn = (post) => {
+  const btn = document.createElement('button');
+  btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  btn.setAttribute('data-id', post.id);
+  btn.setAttribute('data-bs-toggel', 'modal');
+  btn.setAttribute('data-bs-target', '#modal');
+  btn.setAttribute('type', 'button');
+  btn.textContent = 'Просмотр';
+  return btn;
+};
+
+const renderPosts = (posts, elements) => {
+  const containerPosts = generateContainerForPostsAndFeeds('Посты');
 
   const listPosts = document.createElement('ul');
   listPosts.classList.add('list-group', 'border-0', 'rounded-0');
   posts.forEach((post) => {
     const item = document.createElement('li');
     item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    const link = document.createElement('a');
-    link.classList.add('fw-bold');
-    link.setAttribute('href', post.link);
-    link.setAttribute('data-id', post.id);
-    link.setAttribute('target', '_blank');
-    link.setAttribute('rel', 'noopener noreferrer');
-    link.textContent = post.title;
-    const btn = document.createElement('button');
-    btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    btn.setAttribute('data-id', post.id);
-    btn.setAttribute('data-bs-toggel', 'modal');
-    btn.setAttribute('data-bs-target', '#modal');
-    btn.setAttribute('type', 'button');
-    btn.textContent = 'Просмотр';
+    const link = generateLink(post);
+    const btn = generateBtn(post);
     item.append(link);
     item.append(btn);
     listPosts.append(item);
   });
+
   listPosts.addEventListener('click', (e) => {
-    console.log(e.target.tagName);
     if (e.target.tagName === 'A') {
       e.target.setAttribute('class', 'fw-normal link-secondary');
     }
   });
-  container.append(listPosts);
-  elements.posts.replaceChildren(container);
+
+  containerPosts.append(listPosts);
+  elements.posts.replaceChildren(containerPosts);
 };
 
-const renderFeed = (feeds, elements) => {
-  const container = document.createElement('div');
-  container.classList.add('card', 'border-0');
-  const body = document.createElement('div');
-  body.classList.add('card-body');
-  const titleBody = document.createElement('h2');
-  titleBody.classList.add('card-title', 'h4');
-  titleBody.textContent = 'Фиды';
-  body.append(titleBody);
-  container.append(body);
+// const generateFeeds = (elements) => {
+//   const listFeeds = [];
+//   elements.forEach((element) => {
+//     const item = document.createElement('li');
+//     item.classList.add('list-group-item', 'border-0', 'border-end-0');
+//     const titleFeed = document.createElement('h3');
+//     titleFeed.classList.add('h6', 'm-0');
+//     titleFeed.textContent = element.title;
+//     const descriptionFeed = document.createElement('p');
+//     descriptionFeed.classList.add('m-0', 'small', 'text-black-50');
+//     descriptionFeed.textContent = element.description;
+//     item.append(titleFeed);
+//     item.append(descriptionFeed);
+//     listFeeds.push(item);
+//   });
+//   return listFeeds;
+// };
 
-  const listPosts = document.createElement('ul');
-  listPosts.classList.add('list-group', 'border-0', 'rounded-0');
+const renderFeed = (feeds, elements) => {
+  const containerFeeds = generateContainerForPostsAndFeeds('Фиды');
+
+  const listFeeds = document.createElement('ul');
+  listFeeds.classList.add('list-group', 'border-0', 'rounded-0');
   feeds.forEach((feed) => {
     const item = document.createElement('li');
     item.classList.add('list-group-item', 'border-0', 'border-end-0');
     const titleFeed = document.createElement('h3');
     titleFeed.classList.add('h6', 'm-0');
-    console.log(feed.title);
-    console.log(feed);
     titleFeed.textContent = feed.title;
     const descriptionFeed = document.createElement('p');
     descriptionFeed.classList.add('m-0', 'small', 'text-black-50');
     descriptionFeed.textContent = feed.description;
     item.append(titleFeed);
     item.append(descriptionFeed);
-    listPosts.append(item);
+    listFeeds.append(item);
   });
-  container.append(listPosts);
-  elements.feeds.replaceChildren(container);
+
+  containerFeeds.append(listFeeds);
+  elements.feeds.replaceChildren(containerFeeds);
 };
 
 export default (state, elements, textLib) => {
