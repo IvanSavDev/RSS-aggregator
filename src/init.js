@@ -8,12 +8,16 @@ import loader from './loader';
 import parser from './parser';
 
 const addPostsAndFeeds = (inputData, state, watchedState) => {
-  const currentWatchedState = watchedState;
-  const { feed, posts } = parser(inputData, uniqueId());
-  const updatePosts = [...posts, ...state.posts];
-  const updateFeeds = [feed, ...state.feeds];
-  currentWatchedState.feeds = updateFeeds;
-  currentWatchedState.posts = updatePosts;
+  try {
+    const currentWatchedState = watchedState;
+    const { feed, posts } = parser(inputData, uniqueId());
+    const updatePosts = [...posts, ...state.posts];
+    const updateFeeds = [feed, ...state.feeds];
+    currentWatchedState.feeds = updateFeeds;
+    currentWatchedState.posts = updatePosts;
+  } catch (e) {
+    throw new Error(e.message);
+  }
 };
 
 const updatePostsViaInterval = (func, param) => {

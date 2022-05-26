@@ -14,6 +14,7 @@ export default (datas, feeds, textLib) => {
     url: yup.string().required().url()
       .notOneOf(feeds),
   });
+
   return schema.validate(datas, { abortEarly: false })
     .then(() => [])
     .catch((e) => textLib(e.message));
