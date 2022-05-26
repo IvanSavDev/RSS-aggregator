@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import ru from './locales/ru';
 import validate from './validate';
 import updateRss from './updateRss';
-import render from './view';
+import view from './view';
 import loader from './loader';
 import parser from './parser';
 
@@ -73,7 +73,7 @@ const app = (textLib) => {
     },
   };
 
-  const watchedState = render(state, elements, textLib);
+  const watchedState = view(state, elements, textLib);
 
   updatePostsViaInterval(updateRss, watchedState);
 
