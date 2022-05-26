@@ -1,4 +1,5 @@
 import onChange from 'on-change';
+import _ from 'lodash';
 
 const resetForm = (textLib, elements) => {
   const { input, feedback: textError, form } = elements;
@@ -58,7 +59,7 @@ const generateBtn = (post) => {
   const btn = document.createElement('button');
   btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   btn.setAttribute('data-id', post.id);
-  btn.setAttribute('data-bs-toggel', 'modal');
+  btn.setAttribute('data-bs-toggle', 'modal');
   btn.setAttribute('data-bs-target', '#modal');
   btn.setAttribute('type', 'button');
   btn.textContent = 'Просмотр';
@@ -109,9 +110,25 @@ const renderPosts = (state, posts, elements) => {
 
   containerListPosts.addEventListener('click', (e) => {
     const currentElement = e.target;
+    let activeLink;
     if (currentElement.tagName === 'A') {
-      currentElement.setAttribute('class', 'fw-normal link-secondary');
-      const currentLink = currentElement.getAttribute('href');
+      activeLink = currentElement;
+    }
+    if (currentElement.tagName === 'BUTTON') {
+      activeLink = currentElement.previousElementSibling;
+      const modalTitle = document.querySelector('.modal-title');
+      const modalBody = document.querySelector('.modal-body');
+      const btnShowArticle = document.querySelector('.link-article');
+      const idBtn = currentElement.getAttribute('data-id');
+      const objWithData = _.find(state.posts, { id: idBtn });
+
+      modalTitle.innerHTML = objWithData.title;
+      modalBody.innerHTML = objWithData.description;
+      btnShowArticle.setAttribute('href', objWithData.link);
+    }
+    if (activeLink) {
+      activeLink.setAttribute('class', 'fw-normal link-secondary');
+      const currentLink = activeLink.getAttribute('href');
       state.ui.activeLink.push(currentLink);
     }
   });
