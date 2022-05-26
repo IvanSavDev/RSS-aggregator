@@ -1,5 +1,5 @@
 {
-  "ignorePatterns": ["dist", "node_modules", "webpack.*"],
+  "ignorePatterns": ["dist", "node_modules"],
   "env": {
     "browser": true,
     "es6": true

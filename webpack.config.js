@@ -32,27 +32,27 @@ module.exports = {
 
   watchOptions: {
     poll: true,
-    ignored: /node_modules/
+    ignored: /node_modules/,
   },
 
   module: {
     rules: [
-      { 
-        test: /\.(html)$/, use: ['html-loader'] 
+      {
+        test: /\.(html)$/, use: ['html-loader'],
       },
       {
         test: /\.(sass|scss|css)$/,
         use: [
-          devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
           'postcss-loader',
           'sass-loader',
         ],
       },
-    ]
+    ],
   },
 
-  plugins: 
+  plugins:
     [
       new HtmlWebpackPlugin({
         template: './index.html',
@@ -62,4 +62,4 @@ module.exports = {
       }),
       new ESLintPlugin(),
     ],
-}
+};
