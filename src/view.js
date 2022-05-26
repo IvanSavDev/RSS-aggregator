@@ -55,14 +55,14 @@ const generateLink = (state, post) => {
   return link;
 };
 
-const generateBtn = (post) => {
+const generateBtn = (post, textLib) => {
   const btn = document.createElement('button');
   btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   btn.setAttribute('data-id', post.id);
   btn.setAttribute('data-bs-toggle', 'modal');
   btn.setAttribute('data-bs-target', '#modal');
   btn.setAttribute('type', 'button');
-  btn.textContent = 'Просмотр';
+  btn.textContent = textLib('watchBtn');
   return btn;
 };
 
@@ -84,13 +84,13 @@ const generateFeeds = (feeds) => {
   return listFeeds;
 };
 
-const generatePosts = (state, posts) => {
+const generatePosts = (state, posts, textLib) => {
   const containerPosts = [];
   posts.forEach((post) => {
     const item = document.createElement('li');
     item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const link = generateLink(state, post);
-    const btn = generateBtn(post);
+    const btn = generateBtn(post, textLib);
     item.append(link);
     item.append(btn);
     containerPosts.push(item);
@@ -98,8 +98,8 @@ const generatePosts = (state, posts) => {
   return containerPosts;
 };
 
-const renderPosts = (state, posts, elements) => {
-  const listPosts = generatePosts(state, posts);
+const renderPosts = (state, posts, elements, textLib) => {
+  const listPosts = generatePosts(state, posts, textLib);
 
   let containerListPosts = elements.posts.querySelector('ul');
   if (elements.posts.children.length === 0) {
@@ -193,7 +193,7 @@ export default (state, elements, textLib) => {
         break;
 
       case 'posts':
-        renderPosts(state, value, elements);
+        renderPosts(state, value, elements, textLib);
         break;
 
       case 'feeds':
