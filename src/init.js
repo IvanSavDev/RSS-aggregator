@@ -20,10 +20,10 @@ const addPostsAndFeeds = (inputData, state, watchedState) => {
   }
 };
 
-const updatePostsViaInterval = (func, param) => {
-  func(param);
+const updatePostsViaInterval = (func, watchState) => {
+  func(watchState);
   setTimeout(() => {
-    setTimeout(updatePostsViaInterval(func, param), 5000);
+    setTimeout(updatePostsViaInterval(func, watchState), 5000);
   }, 5000);
 };
 
@@ -32,20 +32,19 @@ const validateInputData = (state, watchedState, textLib) => {
   const inputUrl = state.data.url;
   validate(state.data, state.existUrls, textLib)
     .then((errors) => {
-      if (isEmpty(errors)) {
-        state.existUrls.push(inputUrl);
-      } else {
+      if (!isEmpty(errors)) {
         throw new Error(`${errors}`);
       }
     })
     .then(() => loader(inputUrl))
     .then((data) => {
+      state.existUrls.push(inputUrl);
       currentWatchedState.processState = 'sent';
       addPostsAndFeeds(data, state, watchedState);
     })
     .catch((error) => {
       currentWatchedState.processState = 'error';
-      currentWatchedState.processError = `${error.message}`;
+      currentWatchedState.processError = textLib(error.message);
     });
 };
 

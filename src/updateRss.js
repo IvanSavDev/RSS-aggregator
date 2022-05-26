@@ -30,7 +30,7 @@ export default (watchedState) => {
   const originalState = onChange.target(watchedState);
   const urls = originalState.existUrls;
 
-  if (urls.length === 0) {
+  if (urls.length === 0 || originalState.processState === 'error') {
     return;
   }
 

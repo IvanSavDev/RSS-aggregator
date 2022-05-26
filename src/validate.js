@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export default (datas, feeds, textLib) => {
+export default (datas, feeds) => {
   yup.setLocale({
     mixed: {
       notOneOf: () => 'existUrl',
@@ -17,5 +17,5 @@ export default (datas, feeds, textLib) => {
 
   return schema.validate(datas, { abortEarly: false })
     .then(() => [])
-    .catch((e) => textLib(e.message));
+    .catch((e) => [e.message]);
 };
