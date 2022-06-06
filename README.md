@@ -10,7 +10,7 @@
 
 ```
 make install
-``
+```
 
 ## Description
 
