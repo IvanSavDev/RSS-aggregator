@@ -1,28 +1,28 @@
 # RSS-aggregator
 
-### Hexlet tests and linter status:
+## Тесты и линтер
 
 [![Actions Status](https://github.com/IvanSavDev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/IvanSavDev/frontend-project-lvl3/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/e98f78163a22c09a33cb/maintainability)](https://codeclimate.com/github/IvanSavDev/frontend-project-lvl3/maintainability)
 [![Status](https://github.com/IvanSavDev/frontend-project-lvl3/actions/workflows/project-lvl3-check.yml/badge.svg)](https://github.com/IvanSavDev/frontend-project-lvl3/actions/workflows/project-lvl3-check.yml)
 
-## Link to deploy:
+## Ссылка на публикацию
 
-https://frontend-project-lvl3-umber-seven.vercel.app/
+[RSS-aggregator](https://frontend-project-lvl3-umber-seven.vercel.app/)
 
-## Description
+## Описание
 
-RSS is a specialized format designed to describe news feeds, article announcements and other materials. This is the easiest way for websites (usually blogs) to give users the ability to subscribe to changes. For this, special services called RSS aggregators are used. These services are able to poll the RSS feeds of sites for new posts and their displays in a convenient way, marking what has been read, and so on.
+RSS — это специализированный формат, предназначенный для описания новостных лент, анонсов статей и других материалов. Это самый простой способ для веб-сайтов (обычно блогов) предоставить пользователям возможность подписаться на изменения. Для этого используются специальные сервисы, называемые RSS-агрегаторами. Эти сервисы умеют опрашивать RSS-ленты сайтов на наличие новых постов и отображать их в удобном виде, отмечая прочитанное.
 
-## Technology stack
-- Network requests - **axios
-- Page layout - **bootstrap
-- Work with text - **i18next
-- Secondary functions - **lodash
-- To track changes - **on-change
-- Validation - **yup
+## Технологический стек
+- Сетевые запросы - **[axios](https://github.com/axios/axios)**
+- Верстка страницы - **[bootstrap](https://getbootstrap.com)**
+- Работа с текстом - **[i18next](https://www.i18next.com)**
+- Дополнительные функции - **[lodash](https://lodash.com)**
+- Наблюдение за изменениями - **[on-change](https://github.com/sindresorhus/on-change)**
+- Валидация - **[yup](https://github.com/jquense/yup)** 
 
-## Installation
+## Установка
 
 ```
 make install
