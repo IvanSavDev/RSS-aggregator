@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import ru from './locales/ru';
-import updateRSS from './updateRSS';
+import updateRSS from './updateRss';
 import view from './view';
 import addPostsAndFeeds from './addContent';
 
