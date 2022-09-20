@@ -6,7 +6,7 @@ export default {
     loadError: 'Ошибка сети',
     parseError: 'Ресурс не содержит валидный RSS',
     watchButton: 'Просмотр',
-    title: 'RSS агрегатор',
-    description: 'Начните читать RSS сегодня! Это легко, это красиво',
+    posts: 'Посты',
+    feeds: 'Фиды',
   },
 };

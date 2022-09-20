@@ -1,19 +1,10 @@
 import * as yup from 'yup';
 
-const validate = async (data, feeds) => {
+const validate = async (data, listRSS) => {
   try {
-    yup.setLocale({
-      mixed: {
-        notOneOf: () => 'existRSS',
-      },
-      string: {
-        url: () => 'uncorrectURL',
-      },
-    });
-
     const schema = yup.object({
-      url: yup.string().required().url()
-        .notOneOf(feeds),
+      url: yup.string().required().url('uncorrectURL')
+        .notOneOf(listRSS, 'existRSS'),
     });
 
     await schema.validate(data, { abortEarly: false });

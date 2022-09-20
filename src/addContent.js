@@ -3,13 +3,13 @@ import parser from './parser';
 import loader from './loader';
 import validate from './validate';
 
-const addPostsAndFeeds = async (state, watchedState, i18n) => {
+const addContent = async (state, watchedState, i18n) => {
   try {
     const { url } = state.data;
-    const resultValidate = await validate(state.data, state.existUrls, i18n);
+    const resultValidate = await validate(state.data, state.listRSS);
     if (!isEmpty(resultValidate)) throw new Error(`${resultValidate}`);
     const responce = await loader(url);
-    state.existUrls.push(url);
+    state.listRSS.push(url);
     watchedState.processState = 'sent';
     const { feed, posts } = parser(responce, uniqueId());
     const updatePosts = [...posts, ...state.posts];
@@ -22,4 +22,4 @@ const addPostsAndFeeds = async (state, watchedState, i18n) => {
   }
 };
 
-export default addPostsAndFeeds;
+export default addContent;

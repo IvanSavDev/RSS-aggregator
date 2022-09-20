@@ -1,8 +1,11 @@
 import i18next from 'i18next';
+import onChange from 'on-change';
 import ru from './locales/ru';
 import updateRSS from './updateRss';
-import view from './view';
-import addPostsAndFeeds from './addContent';
+import {
+  renderErrors, renderFeed, renderPosts, handleProcessState,
+} from './view';
+import addContent from './addContent';
 
 const app = (i18n) => {
   const elements = {
@@ -15,24 +18,44 @@ const app = (i18n) => {
   };
 
   const state = {
-    valid: true,
     processState: 'filling',
     processError: null,
     data: {
       url: '',
     },
-    existUrls: [],
+    listRSS: [],
     feeds: [],
     posts: [],
     ui: {
-      activeLink: [],
+      activeLinks: [],
     },
   };
 
-  const watchedState = view(state, elements, i18n);
+  const watchedState = onChange(state, (path, value) => {
+    switch (path) {
+      case 'processError':
+        renderErrors(value, elements);
+        break;
+
+      case 'processState':
+        handleProcessState(value, elements, i18n);
+        break;
+
+      case 'posts':
+        renderPosts(state, value, elements, i18n);
+        break;
+
+      case 'feeds':
+        renderFeed(value, elements, i18n);
+        break;
+
+      default:
+        break;
+    }
+  });
 
   setTimeout(function updatePosts() {
-    updateRSS(watchedState);
+    updateRSS(state, watchedState);
     setTimeout(updatePosts, 5000);
   });
 
@@ -40,10 +63,10 @@ const app = (i18n) => {
     event.preventDefault();
     watchedState.processState = 'sending';
     watchedState.processError = null;
-    const dataFromForm = new FormData(event.target);
-    const value = dataFromForm.get('url');
-    state.data.url = value;
-    addPostsAndFeeds(state, watchedState, i18n);
+    const formData = new FormData(event.target);
+    const url = formData.get('url');
+    state.data.url = url;
+    addContent(state, watchedState, i18n);
   });
 };
 
