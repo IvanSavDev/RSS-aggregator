@@ -1,59 +1,15 @@
-import { isEmpty, uniqueId } from 'lodash';
 import i18next from 'i18next';
 import ru from './locales/ru';
-import validate from './validate';
-import updateRss from './updateRss';
+import updateRSS from './updateRSS';
 import view from './view';
-import loader from './loader';
-import parser from './parser';
+import addPostsAndFeeds from './addContent';
 
-const addPostsAndFeeds = (inputData, state, watchedState) => {
-  try {
-    const currentWatchedState = watchedState;
-    const { feed, posts } = parser(inputData, uniqueId());
-    const updatePosts = [...posts, ...state.posts];
-    const updateFeeds = [feed, ...state.feeds];
-    currentWatchedState.feeds = updateFeeds;
-    currentWatchedState.posts = updatePosts;
-  } catch (e) {
-    throw new Error(e.message);
-  }
-};
-
-const updatePostsViaInterval = (func, watchState) => {
-  func(watchState);
-  setTimeout(() => {
-    setTimeout(updatePostsViaInterval(func, watchState), 5000);
-  }, 5000);
-};
-
-const validateInputData = (state, watchedState, textLib) => {
-  const currentWatchedState = watchedState;
-  const inputUrl = state.data.url;
-  validate(state.data, state.existUrls, textLib)
-    .then((errors) => {
-      if (!isEmpty(errors)) {
-        throw new Error(`${errors}`);
-      }
-    })
-    .then(() => loader(inputUrl))
-    .then((data) => {
-      state.existUrls.push(inputUrl);
-      currentWatchedState.processState = 'sent';
-      addPostsAndFeeds(data, state, watchedState);
-    })
-    .catch((error) => {
-      currentWatchedState.processState = 'error';
-      currentWatchedState.processError = textLib(error.message);
-    });
-};
-
-const app = (textLib) => {
+const app = (i18n) => {
   const elements = {
     form: document.querySelector('.rss-form'),
-    input: document.querySelector('#url-input'),
+    inputRSS: document.querySelector('#url-input'),
     feedback: document.querySelector('.feedback'),
-    btn: document.querySelector('[aria-label="add"]'),
+    addRSS: document.querySelector('button[aria-label="add"]'),
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
   };
@@ -73,30 +29,31 @@ const app = (textLib) => {
     },
   };
 
-  const watchedState = view(state, elements, textLib);
+  const watchedState = view(state, elements, i18n);
 
-  updatePostsViaInterval(updateRss, watchedState);
+  setTimeout(function updatePosts() {
+    updateRSS(watchedState);
+    setTimeout(updatePosts, 5000);
+  });
 
-  elements.form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  elements.form.addEventListener('submit', (event) => {
+    event.preventDefault();
     watchedState.processState = 'sending';
     watchedState.processError = null;
-    const dataFromForm = new FormData(e.target);
+    const dataFromForm = new FormData(event.target);
     const value = dataFromForm.get('url');
     state.data.url = value;
-
-    validateInputData(state, watchedState, textLib);
+    addPostsAndFeeds(state, watchedState, i18n);
   });
 };
 
-export default () => {
+export default async () => {
   const i18nextInstance = i18next.createInstance();
-  i18nextInstance.init({
+  await i18nextInstance.init({
     lng: 'ru',
     resources: {
       ru,
     },
-  }).then((result) => {
-    app(result);
   });
+  app(i18nextInstance);
 };

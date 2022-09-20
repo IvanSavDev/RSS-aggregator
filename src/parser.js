@@ -3,33 +3,34 @@ import { uniqueId } from 'lodash';
 export default (data, feedId) => {
   try {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(data, 'application/xml');
-    const feedTitle = doc.querySelector('channel title');
-    const feedTitleContent = feedTitle.textContent;
-    const descriptionFeed = doc.querySelector('channel description');
-    const descriptionFeedContent = descriptionFeed.textContent;
-    const feed = { title: feedTitleContent, description: descriptionFeedContent, id: feedId };
+    const parsedDocument = parser.parseFromString(data, 'application/xml');
 
-    const postsEls = doc.querySelectorAll('item');
-    const posts = Array.from(postsEls).map((post) => {
-      const titlePost = post.querySelector('title');
-      const titlePostContent = titlePost.textContent;
-      const linkPost = post.querySelector('link');
-      const linkPostContent = linkPost.textContent;
-      const descriptionPost = post.querySelector('description');
-      const descriptionPostContent = descriptionPost.textContent;
+    const feedTitleElement = parsedDocument.querySelector('channel title');
+    const feedTitle = feedTitleElement.textContent;
+    const feedDescriptionElement = parsedDocument.querySelector('channel description');
+    const feedDescription = feedDescriptionElement.textContent;
+    const feed = { title: feedTitle, description: feedDescription, id: feedId };
+
+    const postsElements = parsedDocument.querySelectorAll('item');
+    const posts = Array.from(postsElements).map((post) => {
+      const titleElement = post.querySelector('title');
+      const title = titleElement.textContent;
+      const linkElement = post.querySelector('link');
+      const link = linkElement.textContent;
+      const descriptionElement = post.querySelector('description');
+      const description = descriptionElement.textContent;
 
       return {
         id: uniqueId(),
-        title: titlePostContent,
-        link: linkPostContent,
-        description: descriptionPostContent,
+        title,
+        link,
+        description,
         feedId,
       };
     });
 
     return { feed, posts };
-  } catch (e) {
-    throw new Error('errorParse');
+  } catch {
+    throw new Error('parseError');
   }
 };

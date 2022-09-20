@@ -1,10 +1,12 @@
 export default {
   translation: {
-    uncorrectUrl: 'Ссылка должна быть валидным URL',
-    existUrl: 'RSS уже существует',
-    succesfullUpload: 'RSS успешно загружен',
+    uncorrectURL: 'Ссылка должна быть валидным URL',
+    existRSS: 'RSS уже существует',
+    succesfulUpload: 'RSS успешно загружен',
     loadError: 'Ошибка сети',
-    errorParse: 'Ресурс не содержит валидный RSS',
-    watchBtn: 'Просмотр',
+    parseError: 'Ресурс не содержит валидный RSS',
+    watchButton: 'Просмотр',
+    title: 'RSS агрегатор',
+    description: 'Начните читать RSS сегодня! Это легко, это красиво',
   },
 };

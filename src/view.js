@@ -1,25 +1,25 @@
 import onChange from 'on-change';
 import _ from 'lodash';
 
-const resetForm = (textLib, elements) => {
-  const { input, feedback: textError, form } = elements;
+const resetForm = (i18n, elements) => {
+  const { inputRSS, feedback: textError, form } = elements;
 
-  textError.textContent = textLib('succesfullUpload');
+  textError.textContent = i18n.t('succesfulUpload');
   if (textError.classList.contains('text-danger')) {
     textError.classList.remove('text-danger');
   }
   textError.classList.add('text-success');
-  input.classList.remove('is-invalid');
+  inputRSS.classList.remove('is-invalid');
   form.reset();
-  input.focus();
+  inputRSS.focus();
 };
 
 const renderErrors = (nameError, elements) => {
-  const { input, feedback: textError } = elements;
+  const { inputRSS, feedback: textError } = elements;
 
   textError.textContent = nameError;
   textError.classList.add('text-danger');
-  input.classList.add('is-invalid');
+  inputRSS.classList.add('is-invalid');
 };
 
 const generateContainerForPostsAndFeeds = (nameGroup) => {
@@ -55,15 +55,15 @@ const generateLink = (state, post) => {
   return link;
 };
 
-const generateBtn = (post, textLib) => {
-  const btn = document.createElement('button');
-  btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  btn.setAttribute('data-id', post.id);
-  btn.setAttribute('data-bs-toggle', 'modal');
-  btn.setAttribute('data-bs-target', '#modal');
-  btn.setAttribute('type', 'button');
-  btn.textContent = textLib('watchBtn');
-  return btn;
+const generatebutton = (post, i18n) => {
+  const button = document.createElement('button');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('data-id', post.id);
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
+  button.setAttribute('type', 'button');
+  button.textContent = i18n.t('watchButton');
+  return button;
 };
 
 const generateFeeds = (feeds) => {
@@ -84,22 +84,44 @@ const generateFeeds = (feeds) => {
   return listFeeds;
 };
 
-const generatePosts = (state, posts, textLib) => {
+/*
+const generatePosts = (state, posts, i18n) => {
   const containerPosts = [];
   posts.forEach((post) => {
     const item = document.createElement('li');
-    item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+item.classList.add('list-group-item',
+'d-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const link = generateLink(state, post);
-    const btn = generateBtn(post, textLib);
+    const button = generatebutton(post, i18n);
     item.append(link);
-    item.append(btn);
+    item.append(button);
     containerPosts.push(item);
   });
+  return posts.map((post) => {
+    const item = document.createElement('li');
+item.classList.add('list-group-item',
+'d-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    const link = generateLink(state, post);
+    const button = generatebutton(post, i18n);
+    item.append(link);
+    item.append(button);
+    containerPosts.push(item);
+  })
   return containerPosts;
-};
+}; */
 
-const renderPosts = (state, posts, elements, textLib) => {
-  const listPosts = generatePosts(state, posts, textLib);
+const generatePosts = (state, posts, i18n) => posts.map((post) => {
+  const item = document.createElement('li');
+  item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+  const link = generateLink(state, post);
+  const button = generatebutton(post, i18n);
+  item.append(link);
+  item.append(button);
+  return item;
+});
+
+const renderPosts = (state, posts, elements, i18n) => {
+  const listPosts = generatePosts(state, posts, i18n);
 
   let containerListPosts = elements.posts.querySelector('ul');
   if (elements.posts.children.length === 0) {
@@ -108,8 +130,8 @@ const renderPosts = (state, posts, elements, textLib) => {
     containerListPosts = elements.posts.querySelector('ul');
   }
 
-  containerListPosts.addEventListener('click', (e) => {
-    const currentElement = e.target;
+  containerListPosts.addEventListener('click', (event) => {
+    const currentElement = event.target;
     let activeLink;
     if (currentElement.tagName === 'A') {
       activeLink = currentElement;
@@ -118,13 +140,13 @@ const renderPosts = (state, posts, elements, textLib) => {
       activeLink = currentElement.previousElementSibling;
       const modalTitle = document.querySelector('.modal-title');
       const modalBody = document.querySelector('.modal-body');
-      const btnShowArticle = document.querySelector('.link-article');
-      const idBtn = currentElement.getAttribute('data-id');
-      const objWithData = _.find(state.posts, { id: idBtn });
+      const buttonShowArticle = document.querySelector('.link-article');
+      const idbutton = currentElement.getAttribute('data-id');
+      const objWithData = _.find(state.posts, { id: idbutton });
 
       modalTitle.innerHTML = objWithData.title;
       modalBody.innerHTML = objWithData.description;
-      btnShowArticle.setAttribute('href', objWithData.link);
+      buttonShowArticle.setAttribute('href', objWithData.link);
     }
     if (activeLink) {
       activeLink.setAttribute('class', 'fw-normal link-secondary');
@@ -148,32 +170,32 @@ const renderFeed = (feeds, elements) => {
   containerListFeeds.replaceChildren(...listFeeds);
 };
 
-const handleProcessState = (textLib, processState, elements) => {
-  const { btn, feedback } = elements;
+const handleProcessState = (i18n, processState, elements) => {
+  const { addRSS, feedback } = elements;
 
   switch (processState) {
     case 'filling':
-      if (btn.classList.contains('disabled')) {
-        btn.classList.remove('disabled');
+      if (addRSS.classList.contains('disabled')) {
+        addRSS.classList.remove('disabled');
       }
       break;
 
     case 'sending':
-      btn.classList.add('disabled');
+      addRSS.classList.add('disabled');
       feedback.textContent = '';
       break;
 
     case 'error':
-      if (btn.classList.contains('disabled')) {
-        btn.classList.remove('disabled');
+      if (addRSS.classList.contains('disabled')) {
+        addRSS.classList.remove('disabled');
       }
       break;
 
     case 'sent':
-      if (btn.classList.contains('disabled')) {
-        btn.classList.remove('disabled');
+      if (addRSS.classList.contains('disabled')) {
+        addRSS.classList.remove('disabled');
       }
-      resetForm(textLib, elements);
+      resetForm(i18n, elements);
       break;
 
     default:
@@ -181,7 +203,7 @@ const handleProcessState = (textLib, processState, elements) => {
   }
 };
 
-export default (state, elements, textLib) => {
+export default (state, elements, i18n) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'processError':
@@ -189,11 +211,11 @@ export default (state, elements, textLib) => {
         break;
 
       case 'processState':
-        handleProcessState(textLib, value, elements);
+        handleProcessState(i18n, value, elements);
         break;
 
       case 'posts':
-        renderPosts(state, value, elements, textLib);
+        renderPosts(state, value, elements, i18n);
         break;
 
       case 'feeds':

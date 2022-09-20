@@ -1,21 +1,26 @@
 import * as yup from 'yup';
 
-export default (datas, feeds) => {
-  yup.setLocale({
-    mixed: {
-      notOneOf: () => 'existUrl',
-    },
-    string: {
-      url: () => 'uncorrectUrl',
-    },
-  });
+const validate = async (data, feeds) => {
+  try {
+    yup.setLocale({
+      mixed: {
+        notOneOf: () => 'existRSS',
+      },
+      string: {
+        url: () => 'uncorrectURL',
+      },
+    });
 
-  const schema = yup.object({
-    url: yup.string().required().url()
-      .notOneOf(feeds),
-  });
+    const schema = yup.object({
+      url: yup.string().required().url()
+        .notOneOf(feeds),
+    });
 
-  return schema.validate(datas, { abortEarly: false })
-    .then(() => [])
-    .catch((e) => [e.message]);
+    await schema.validate(data, { abortEarly: false });
+    return [];
+  } catch (error) {
+    return [error.message];
+  }
 };
+
+export default validate;
