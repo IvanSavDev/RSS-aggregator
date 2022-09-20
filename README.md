@@ -6,7 +6,7 @@
 
 ## Ссылка на публикацию
 
-[RSS-aggregator](https://frontend-project-lvl3-umber-seven.vercel.app/)
+[RSS-aggregator](https://rss-aggregator-ivansavdev.vercel.app/)
 
 ## Описание
 
