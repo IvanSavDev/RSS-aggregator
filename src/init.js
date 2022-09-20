@@ -20,9 +20,6 @@ const app = (i18n) => {
   const state = {
     processState: 'filling',
     processError: null,
-    data: {
-      url: '',
-    },
     listRSS: [],
     feeds: [],
     posts: [],
@@ -65,8 +62,7 @@ const app = (i18n) => {
     watchedState.processError = null;
     const formData = new FormData(event.target);
     const url = formData.get('url');
-    state.data.url = url;
-    addContent(state, watchedState, i18n);
+    addContent(state, watchedState, url, i18n);
   });
 };
 
